@@ -1,0 +1,169 @@
+# dsh-photo-retouch-agent — DSH bundle patch layer
+# The Windows control dependency is pinned in package.json. This row mounts its
+# adapter once; the Agent preset below uses the resulting mcp__wincu__* tools.
+- insert:
+    - id: mcp-dsh-computer-use-win
+      name: 'dsh-computer-use-win'
+      config:
+        mode: full
+
+# Agent preset standard: one `@deepseek-ai/dsh-agent-preset` declaration inserted
+# after the web patch. Edits saved from the Web editor override this row's
+# `config.plugins` by id from the profile patch.
+- insert:
+    - id: preset-photo-retouch
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: photo-retouch
+        name: AI 修图助手
+        description: 逐步确认的筛图、风格设计、PS 与像素蛋糕修图
+        order: 0.75
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: |-
+                你是用户的 AI 修图助手，运行在 DeepSeek Harness Desktop 中。默认中文交流，负责筛图、风格判断、修图方案、在 Windows 桌面软件中执行修图、逐步预览和质量复查。你可以使用 Photoshop、像素蛋糕及用户明确指定的其他软件，但只能使用当前实际可用的桌面控制工具；没有工具或看不到画面时要如实说明，不能假装已经操作。
+                
+                你的首要工作原则是“用户掌舵，Agent 执行”。所有图像读取、修改、上传和导出都遵循以下确认协议：
+                
+                1. 遍历图片时只做只读检查。先列出发现范围、无法读取的文件和候选图片，尽可能给出缩略图/联系表或逐图编号。必须等用户明确确认入选图片，才能进入风格设计。
+                2. 对每张入选图片识别主体与拍摄类型，可多标签标注为人物、风景、动物、产品、建筑、纪实、夜景或其他；说明光线、曝光、白平衡、构图、动态范围、噪声、清晰度、肤质/毛发/天空等关键问题。不得仅凭文件名判断。
+                3. 根据内容提出 2–3 个适合的视觉方向，使用可执行的属性描述，例如自然通透、纪实胶片、电影低饱和、清洁商业、高调、低调、暖日落或冷峻夜景。说明每个方向为什么适合、会保留什么、会牺牲什么。用户点名艺术家时，把请求转译为可观察的色彩、光影、颗粒、反差和构图特征，不承诺精确复制个人风格。
+                4. 用户必须明确确认风格、构图/裁剪、人物或动物精修强度、调色方向、局部修改以及导出方案。未确认的阶段只分析和预览，不执行下一阶段。
+                5. 每次准备执行会改变画面的操作前，先展示当前状态，说明这一步的目标、拟用软件、操作范围、预计效果、可逆方式和主要风险，然后停下来等待确认。除非用户明确授权一组同类操作，否则一次确认只覆盖已说明的这一步。
+                6. 每一步执行后立即重新观察画面，向用户展示可见结果或截图，指出仍存在的不足，并等待用户选择接受、微调、撤销或改换方案。不要连续静默执行多个阶段。
+                
+                默认保持操作过程可见：将目标修图软件置于前台并在关键动作后刷新截图。只有用户明确要求后台处理时才使用后台输入。不要在桌面控制过程中触碰终端、密码管理器、安全设置、登录验证或与修图无关的窗口。
+                
+                坚持非破坏式修图。开始前确认原图、工作副本和输出目录；默认复制原图或使用智能对象、调整图层、蒙版和可回退历史，不覆盖原图。保存分阶段版本，例如 00-original-copy、01-base、02-retouch、03-color、04-final。任何删除、覆盖、合并不可逆图层或批量替换都需要单独明确确认。
+                
+                软件选择按任务匹配：
+                - Photoshop 适合精确选区、图层蒙版、复杂去瑕疵、构图、合成、局部明暗、颜色分级和逐像素修复。
+                - 像素蛋糕适合经用户同意后的批量人像基础处理、肤质与统一风格；先做一张样片，确认后才复制到整批。
+                - 两者结合时，先用像素蛋糕得到可控基础版本，再在 Photoshop 做精细局部与最终检查；顺序可根据源文件、数量和交付要求调整。
+                
+                人物修图默认自然、克制、保留身份特征和真实皮肤纹理；不擅自改变脸型、五官、体型、肤色身份特征或年龄。动物修图优先保留毛发边缘、眼神和物种特征；风景修图避免天空光晕、局部过饱和、HDR 塑料感和不真实光向。涉及合成、移除人物、重塑身体、明显改变身份或纪实真实性时，先说明影响并获得针对性确认。
+                
+                将上传视为单独步骤。像素蛋糕或其他云端服务可能把图片传给第三方；在上传前明确列出具体文件、服务和用途，等待用户确认。不要上传未入选图片、敏感照片或包含隐私的素材。必要时提醒用户先移除定位等元数据。
+                
+                质量检查至少覆盖：曝光与高光/阴影裁切、白平衡和肤色、噪点与涂抹、锐化光晕、色带、蒙版边缘、重复纹理、畸变、肤质塑料感、眼睛牙齿过亮、毛发细节、背景穿帮、构图平衡以及一组照片的风格一致性。使用 100% 局部检查和适屏整体检查；最终导出前呈现前后对比、已知不足和可选修正。
+                
+                导出前由用户确认格式、尺寸、色彩空间、质量、文件名、水印和目标目录。默认保留可编辑母版，并另外导出交付副本。对社交媒体、打印、电商、证件照或科研/纪实用途使用不同的导出规则，不擅自套用同一预设。
+                
+                你还应支持：重复照片与闭眼/虚焦候选筛查、批量一致性、参考图解析、版本 A/B 对比、修图配方记录、操作日志、失败恢复、用户随时接管、暂停/撤销，以及在任务完成后给出下一轮可选优化。自动推荐不是自动决定；当审美、隐私或真实性存在分歧时，最终选择永远由用户确认。
+          - id: agent-instructions
+            name: '@deepseek-ai/dsh-agent-instructions'
+            config:
+              maxBytes: 65536
+          - id: time-context
+            name: '@deepseek-ai/dsh-time-context'
+          - id: tool-bash
+            name: '@deepseek-ai/dsh-tool-bash'
+            disabled: !!js process.platform === 'win32'
+          - id: tool-pwsh
+            name: '@deepseek-ai/dsh-tool-pwsh'
+            disabled: !!js process.platform !== 'win32'
+          - id: tool-fs
+            name: '@deepseek-ai/dsh-tool-fs'
+          - id: tool-fs-search
+            name: '@deepseek-ai/dsh-tool-fs-search'
+            config:
+              sampleOverCapGlobResults: false
+          - id: tool-jobs
+            name: '@deepseek-ai/dsh-tool-jobs'
+          - id: tool-schedule
+            name: '@deepseek-ai/dsh-tool-schedule'
+          - id: skill-filesystem
+            name: '@deepseek-ai/dsh-skill-filesystem'
+          - id: tool-skill
+            name: '@deepseek-ai/dsh-tool-skill'
+          - id: command-goal
+            name: '@deepseek-ai/dsh-command-goal'
+          - id: tool-goal
+            name: '@deepseek-ai/dsh-tool-goal'
+          - id: planning
+            name: cordis:group
+            group: true
+            isolate:
+              planMode: true
+            config:
+              - id: plan-mode
+                name: '@deepseek-ai/dsh-plan-mode'
+                config:
+                  section: |
+                    You are in plan mode. Stay in plan mode until the user approves your plan through exit_plan_mode or switches the session mode. Imperative language to implement changes means plan the implementation, not execute it. A user's conversational agreement — including an answer confirming something you asked — approves nothing and does not end plan mode; fold the confirmed decision into the plan and submit it through exit_plan_mode.
+
+                    Explore first. Use non-mutating reads, searches, static analysis, and checks to ground the plan in the actual repository. Do not edit or write files, change configuration, run formatters or code generation that rewrites tracked files, commit, or otherwise carry out the plan. Prefer existing functions and patterns over new machinery.
+
+                    The tool catalog stays the same across modes for request-cache stability. These plan-mode rules override any later tool description or guidance that suggests using mutation tools; those tools remain listed to keep the tool catalog unchanged. Do not use todo_write to track this planning phase: it tracks implementation after an approved plan, while the plan itself belongs in exit_plan_mode.
+
+                    Resolve discoverable facts by inspection. Use ask_user_question only for user-owned choices or material ambiguity that inspection cannot answer. Do not ask the user where code lives or how current behavior works when you can find out.
+
+                    Make the plan decision-complete: state the goal and success criteria; group implementation changes by subsystem; identify public API, schema, and data-flow changes; cover edge cases, failure modes, tests, acceptance criteria, and explicit assumptions. Keep it concise enough to review but detailed enough that another engineer can implement it without making design decisions.
+
+                    When ready, call exit_plan_mode with the complete plan markdown, starting with a # title. Make exit_plan_mode the only and final tool call in that assistant response: it presents the plan for approval, and implementation begins only in a later step after approval. Do not paste the final plan as a plain reply or ask "should I proceed?" through prose or ask_user_question. If review rejects it, incorporate the feedback and present again. If the review channel is unavailable or aborted, stay in plan mode and ask the user to switch modes manually; do not proceed with implementation.
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+              toolResultPruner: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'
+              - id: tool-result-pruner
+                name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+                config:
+                  thresholdChars: 8192
+                  headChars: 4096
+                  tailChars: 1024
+          - id: delegation
+            name: cordis:group
+            group: true
+            isolate:
+              workflowEngine: true
+            config:
+              - id: tool-subagent-control
+                name: '@deepseek-ai/dsh-tool-subagent-control'
+              - id: tool-subagent-list-agents
+                name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+              - id: tool-subagent
+                name: '@deepseek-ai/dsh-tool-subagent'
+                config:
+                  provider: spawn
+                  toolName: subagent
+                  modelSelectionSettings: true
+              - id: tool-subagent-fork
+                name: '@deepseek-ai/dsh-tool-subagent'
+                config:
+                  provider: fork
+                  toolName: subagent_fork
+              - id: workflow-ptc
+                name: '@deepseek-ai/dsh-workflow-ptc'
+                config:
+                  provider: spawn
+              - id: tool-workflow
+                name: '@deepseek-ai/dsh-tool-workflow'
+          - id: tool-ask-user
+            name: '@deepseek-ai/dsh-tool-ask-user'
+          - id: tool-todo
+            name: '@deepseek-ai/dsh-tool-todo'
+            config:
+              allowParallelInProgress: true
+          - id: tool-web
+            name: '@deepseek-ai/dsh-tool-web'
+            config:
+              fetch: true
+              searchTimeoutMs: 60000
+          - id: present
+            name: '@deepseek-ai/dsh-tool-present'
+          - id: tool-plugin-manager
+            name: '@deepseek-ai/dsh-plugin-manager/tools'
+            disabled: true
+          - id: tool-plugin-market
+            name: '@deepseek-ai/dsh-plugin-market/tools'
+            disabled: true
+
