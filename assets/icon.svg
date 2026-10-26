@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">DSH AI Photo Retouch Agent</title>
+  <desc id="desc">A camera aperture with a confirmation checkmark.</desc>
+  <defs>
+    <linearGradient id="bg" x1="24" y1="20" x2="232" y2="236" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <circle cx="118" cy="116" r="70" fill="none" stroke="#FFFFFF" stroke-width="12" opacity="0.96"/>
+  <path d="M118 46 151 103 85 103Z" fill="#FFFFFF" opacity="0.92"/>
+  <path d="M179 80 150 139 117 82Z" fill="#FFFFFF" opacity="0.86"/>
+  <path d="M184 146 118 145 150 87Z" fill="#FFFFFF" opacity="0.8"/>
+  <path d="M116 186 83 129 149 129Z" fill="#FFFFFF" opacity="0.74"/>
+  <circle cx="118" cy="116" r="27" fill="#312E81" opacity="0.94"/>
+  <circle cx="190" cy="190" r="42" fill="#FFFFFF"/>
+  <path d="m168 190 14 14 30-34" fill="none" stroke="#16A34A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
