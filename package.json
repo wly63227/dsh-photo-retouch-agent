@@ -1,0 +1,50 @@
+{
+  "name": "dsh-photo-retouch-agent",
+  "version": "0.1.0",
+  "description": "A human-confirmed photo retouching Agent for DeepSeek Harness that selects images, matches styles, and operates Photoshop or PixelCake on Windows.",
+  "type": "module",
+  "files": [
+    "cordis.patch.yml",
+    "assets",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.3 <0.3.0"
+  },
+  "os": [
+    "win32"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "photo-retouching",
+    "photoshop",
+    "pixelcake",
+    "computer-use",
+    "human-in-the-loop"
+  ],
+  "author": "wly63227",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wly63227/dsh-photo-retouch-agent.git"
+  },
+  "homepage": "https://github.com/wly63227/dsh-photo-retouch-agent#readme",
+  "icon": "assets/icon.svg",
+  "bugs": {
+    "url": "https://github.com/wly63227/dsh-photo-retouch-agent/issues"
+  },
+  "dependencies": {
+    "dsh-computer-use-win": "0.5.2"
+  }
+}
+
